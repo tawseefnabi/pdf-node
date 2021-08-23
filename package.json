@@ -1,6 +1,6 @@
 {
   "name": "pdf-node",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A JavaScript PDF generation library for NodeJs",
   "main": "index.js",
   "scripts": {
@@ -50,9 +50,9 @@
   "author": "tawseef <tawseefnabi9@gmail.com> (https://twitter.com/NabiTowseef)",
   "license": "MIT",
   "publishConfig": {
-		"@tawseef:registry": "https://npm.pkg.github.com/",
-		"access": "public"
-	},
+    "@tawseef:registry": "https://npm.pkg.github.com/",
+    "access": "public"
+  },
   "devDependencies": {
     "prettier": "^2.3.2"
   }
