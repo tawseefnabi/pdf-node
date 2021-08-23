@@ -1,0 +1,19 @@
+{
+  "name": "pdf-node",
+  "version": "1.0.0",
+  "description": "A JavaScript PDF generation library for NodeJs",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "pdf",
+    "pdf-generator",
+    "pdf4node",
+    "node",
+    "pdf",
+    "generator"
+  ],
+  "author": "tawseef <tawseefnabi9@gmail.com> (https://twitter.com/NabiTowseef)",
+  "license": "MIT"
+}
