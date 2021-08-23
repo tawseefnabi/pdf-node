@@ -49,7 +49,11 @@
   "homepage": "https://github.com/tawseefnabi/pdf-node#readme",
   "author": "tawseef <tawseefnabi9@gmail.com> (https://twitter.com/NabiTowseef)",
   "license": "MIT",
-  "dependencies": {
+  "publishConfig": {
+		"@tawseef:registry": "https://npm.pkg.github.com/",
+		"access": "public"
+	},
+  "devDependencies": {
     "prettier": "^2.3.2"
   }
 }
