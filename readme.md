@@ -102,7 +102,7 @@ npm install  pdf-node --save
     path: "./output.pdf",
     type: "",
   };
-  // By default a file is created but you could switch between Buffer and Streams by using "buffer" or "stream" respectively.
+ 
   ```
 
 - Step 5- After setting all parameters, just pass document and options to `pdf.create` method.
