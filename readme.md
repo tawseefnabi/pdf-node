@@ -15,7 +15,7 @@ npm install  pdf-node --save
 
   ```javascript
   //Required package
-  var pdf = require("pdf--node");
+  var pdf = require("pdf-node");
   var fs = require("fs");
 
   // Read HTML Template
