@@ -100,7 +100,7 @@ npm install  pdf-node --save
       users: users,
     },
     path: "./output.pdf",
-    type: "",
+    type: "pdf",
   };
  
   ```
