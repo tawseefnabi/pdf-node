@@ -15,7 +15,7 @@ npm install  pdf-node --save
 
   ```javascript
   //Required package
-  var pdf = require("pdf--node");
+  var pdf = require("pdf-node");
   var fs = require("fs");
 
   // Read HTML Template
@@ -100,7 +100,7 @@ npm install  pdf-node --save
       users: users,
     },
     path: "./output.pdf",
-    type: "",
+    type: "pdf",
   };
  
   ```
@@ -108,8 +108,7 @@ npm install  pdf-node --save
 - Step 5- After setting all parameters, just pass document and options to `pdf.create` method.
 
   ```javascript
-  pdf
-    .create(document, options)
+  pdf(document, options)
     .then((res) => {
       console.log(res);
     })
