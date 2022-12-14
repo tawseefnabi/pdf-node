@@ -83,7 +83,7 @@ npm install  pdf-node --save
         };
     ```
     
-- Step 4 - Provide HTML, user data and PDF path for output
+- Step 4 - Provided HTML, user data and PDF path for output
 
   ```javascript
   var users = [
