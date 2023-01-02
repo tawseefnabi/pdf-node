@@ -111,7 +111,7 @@ npm install  pdf-node --save
  
   ```
 
-- Step 5- After setting all parameters, just pass document and options to `pdf.create` method.
+- Step 5- After setting all parameters, just pass document and options to `pdf` method.
 
   ```javascript
   pdf(document, options)
