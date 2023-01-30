@@ -125,7 +125,7 @@ npm install  pdf-node --save
 
 ## Reference
 
-Please refer to the following if you want to use conditions in your HTML template:
+Please refer to the following if uiiyou want to use conditions in your HTML template:
 
 - https://handlebarsjs.com/builtin_helpers.html
 
