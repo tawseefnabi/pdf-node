@@ -88,15 +88,15 @@ npm install  pdf-node --save
   ```javascript
   var users = [
     {
-      name: "tom",
+      name: "alpha",
       age: "21",
     },
     {
-      name: "dick",
+      name: "beta",
       age: "23",
     },
     {
-      name: "harry",
+      name: "gamma",
       age: "29",
     },
   ];
