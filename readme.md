@@ -92,7 +92,7 @@ npm install  pdf-node --save
       age: "21",
     },
     {
-      name: "dick",
+      name: "karan",
       age: "23",
     },
     {
