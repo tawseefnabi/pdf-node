@@ -18,7 +18,7 @@ npm install  pdf-node --save
   var pdf = require("pdf-node");
   var fs = require("fs");
 
-  // Read HTML Template
+  // Read HTML Template. Write template.html file path properly. 
   var html = fs.readFileSync("template.html", "utf8");
   ```
 
@@ -88,16 +88,16 @@ npm install  pdf-node --save
   ```javascript
   var users = [
     {
-      name: "alpha",
-      age: "21",
-    },
-    {
-      name: "beta",
+      name: "Nick",
       age: "23",
     },
     {
-      name: "gamma",
-      age: "29",
+      name: "Sam",
+      age: "26",
+    },
+    {
+      name: "Jim",
+      age: "30",
     },
   ];
   var document = {
