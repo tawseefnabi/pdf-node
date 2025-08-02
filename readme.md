@@ -19,7 +19,9 @@ npm install  pdf-node --save
   var fs = require("fs");
 
   // Read HTML Template
-  var html = fs.readFileSync("template.html", "utf8");
+  var path = require('path');
+  var html = fs.readFileSync(path.join(__dirname, '96.html'), 'utf8');
+
   ```
 
 - Step 2 - Create your HTML Template
