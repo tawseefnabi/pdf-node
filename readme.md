@@ -20,7 +20,7 @@ npm install  pdf-node --save
 
   // Read HTML Template
   var path = require('path');
-  var html = fs.readFileSync(path.join(__dirname, '96.html'), 'utf8');
+  var html = fs.readFileSync(path.join(__dirname, 'template.html'), 'utf8');
 
   ```
 
