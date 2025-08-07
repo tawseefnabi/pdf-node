@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run comprehensive checks before pushing
+echo "Running pre-push checks..."
+
+# Run Prettier check
+echo "Checking code formatting..."
+npm run prettier-check
+
+# Run ESLint
+echo "Running lint checks..."
+npm run lint
+
+# Run tests
+echo "Running tests..."
+npm run test-ci
+
+echo "All pre-push checks passed! ✅"
