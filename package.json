@@ -1,6 +1,6 @@
 {
 	"name": "pdf-node",
-	"version": "1.4.1",
+	"version": "1.4.2",
 	"description": "A JavaScript PDF generation library for NodeJs",
 	"main": "index.js",
 	"scripts": {
