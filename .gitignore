@@ -1,8 +1,42 @@
-# NPM #
-##########
-# Ignore all directories called node_modules in current folder and any subfolders.
+# Dependencies
 node_modules/
-/node_modules/
+
+# Build output
+dist/
+
+# Test output
+coverage/
+.nyc_output/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
 # Test output PDFs
 test-output-*.pdf
