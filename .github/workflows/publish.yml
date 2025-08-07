@@ -6,10 +6,43 @@ on:
       - closed
     branches:
       - main
+  workflow_run:
+    workflows: ["PDF Node Quality Checks"]
+    types:
+      - completed
+    branches:
+      - main
 
 jobs:
-  publish:
+  # Run CI checks first
+  ci-check:
     if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run prettier-check
+      - run: npm run test-ci
+
+  # Publish only after CI passes
+  publish:
+    needs: ci-check
+    if: |
+      (
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.merged == true
+      ) || (
+        github.event_name == 'workflow_run' &&
+        github.event.workflow_run.conclusion == 'success'
+      )
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
