@@ -1,20 +1,31 @@
 {
+	"type": "module",
 	"name": "pdf-node",
 	"version": "1.4.2",
-	"description": "A JavaScript PDF generation library for NodeJs",
-	"main": "index.js",
+	"description": "A modern, feature-rich PDF generation library for Node.js with TypeScript support. Convert HTML to PDF with Handlebars templates, buffers, and streams.",
+	"main": "dist/index.js",
+	"types": "types/index.d.ts",
+	"files": [
+		"dist",
+		"types"
+	],
 	"scripts": {
-		"start": "node index.js",
-		"test": "node test.js",
-		"format": "prettier --write \"./**/*.{js,json}\"",
-		"lint": "eslint .",
-		"prettier-check": "prettier --check \"./**/*.{js,json}\"",
-		"test-ci": "node test-ci-safe.js",
-		"prepare": "husky"
+		"start": "node dist/index.js",
+		"build": "tsc",
+		"build:watch": "tsc --watch",
+		"test": "npm run build && node dist/test-buffer.js",
+		"format": "prettier --write \"./**/*.{js,json,ts}\"",
+		"lint": "eslint --config .eslintrc.mjs src/ types/ --ext .ts",
+		"prettier-check": "prettier --check \"./**/*.{js,json,ts}\"",
+		"test-ci": "npm run build && node dist/test-ci-safe.js",
+		"prepare": "husky",
+		"postversion": "git push && git push --tags"
 	},
 	"keywords": [
 		"pdf",
 		"generator",
+		"typescript",
+		"esm",
 		"pdf generator",
 		"html to pdf",
 		"html2pdf",
@@ -25,8 +36,11 @@
 		"pdf microservice",
 		"node pdf",
 		"nodejs pdf",
+		"typescript pdf",
+		"es modules",
 		"node pdf generator",
 		"nodejs pdf generator",
+		"typescript pdf generator",
 		"node pdf library",
 		"nodejs pdf library",
 		"express pdf",
@@ -39,6 +53,9 @@
 		"pdf export",
 		"pdf report",
 		"pdf invoice",
+		"handlebars",
+		"templates",
+		"pdf templates",
 		"pdf document",
 		"handlebars pdf",
 		"template pdf",
@@ -95,10 +112,18 @@
 	"devDependencies": {
 		"@changesets/cli": "^2.29.5",
 		"@eslint/js": "^9.32.0",
+		"@types/handlebars": "^4.0.40",
+		"@types/html-pdf": "^3.0.3",
+		"@types/node": "^24.2.0",
+		"@typescript-eslint/eslint-plugin": "^8.39.0",
+		"@typescript-eslint/parser": "^8.39.0",
 		"changesets": "^1.0.2",
 		"eslint": "^9.32.0",
+		"eslint-import-resolver-typescript": "^4.4.4",
 		"globals": "^16.3.0",
 		"husky": "^9.1.7",
-		"prettier": "^2.3.2"
+		"prettier": "^2.3.2",
+		"typescript": "^5.9.2",
+		"typescript-eslint": "^8.39.0"
 	}
 }

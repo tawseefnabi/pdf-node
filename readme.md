@@ -1,31 +1,232 @@
 # pdf-node
-  A JavaScript PDF generation library for NodeJs
+A powerful PDF generation library for Node.js with first-class TypeScript support
 
 [![CI](https://github.com/tawseefnabi/pdf-node/actions/workflows/ci.yml/badge.svg)](https://github.com/tawseefnabi/pdf-node/actions/workflows/ci.yml)
 [![npm version](https://badge.fury.io/js/pdf-node.svg)](https://badge.fury.io/js/pdf-node)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Supported-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-<br>
+## Features
 
-[![📟](https://raw.githubusercontent.com/ahmadawais/stuff/master/images/git/install.png)](./../../)
+- 🚀 Generate PDFs from HTML templates with Handlebars
+- 📦 Works with both JavaScript and TypeScript
+- ✨ Supports both CommonJS and ES Modules
+- 🎨 Customize PDF options (format, orientation, borders, etc.)
+- 🔥 Async/await support
+- 📝 Type definitions included
+- 🛠️ CLI support
 
-## Install
+## Table of Contents
 
-```sh
-npm install  pdf-node --save
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [JavaScript Usage](#javascript-usage)
+- [TypeScript Usage](#typescript-usage)
+- [API Reference](#api-reference)
+- [Template Guide](#template-guide)
+- [CLI Usage](#cli-usage)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Installation
+
+```bash
+# Using npm
+npm install pdf-node
+
+# Using yarn
+yarn add pdf-node
+
+# Using pnpm
+pnpm add pdf-node
 ```
 
-- Step 1 - Add required packages and read HTML template
+### TypeScript Support
 
-  ```javascript
-  //Required package
-  var pdf = require("pdf-node");
-  var fs = require("fs");
+This package includes TypeScript type definitions. For the best experience, install these dev dependencies:
 
-  // Read HTML Template
-  var path = require('path');
-  var html = fs.readFileSync(path.join(__dirname, 'template.html'), 'utf8');
+```bash
+npm install --save-dev typescript @types/node @types/handlebars
+```
 
-  ```
+## Quick Start
+
+### 1. Create a simple HTML template (`template.html`)
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>User Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .user { margin-bottom: 20px; padding: 10px; border: 1px solid #eee; }
+        .header { background: #f5f5f5; padding: 20px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>User Report</h1>
+        <p>Generated on {{date}}</p>
+    </div>
+
+    {{#each users}}
+    <div class="user">
+        <h2>{{name}}</h2>
+        <p>Age: {{age}}</p>
+        <p>Email: {{email}}</p>
+    </div>
+    {{/each}}
+</body>
+</html>
+```
+
+### 2. Generate PDF (JavaScript)
+
+```javascript
+// CommonJS
+const { generatePDF } = require('pdf-node');
+const fs = require('fs');
+const path = require('path');
+
+// Or ES Modules
+// import { generatePDF } from 'pdf-node';
+// import { fileURLToPath } from 'url';
+// import { dirname } from 'path';
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
+
+async function createPDF() {
+    // Read HTML template
+    const html = fs.readFileSync(path.join(__dirname, 'template.html'), 'utf8');
+    
+    // Sample data
+    const users = [
+        { name: 'John Doe', age: 30, email: 'john@example.com' },
+        { name: 'Jane Smith', age: 25, email: 'jane@example.com' },
+    ];
+
+    // PDF options
+    const options = {
+        format: 'A4',
+        orientation: 'portrait',
+        border: '10mm',
+        header: {
+            height: '15mm',
+            contents: '<div style="text-align: center;">Confidential Report</div>'
+        },
+        footer: {
+            height: '15mm',
+            contents: {
+                default: '<div style="text-align: center; color: #666;">Page {{page}} of {{pages}}</div>'
+            }
+        }
+    };
+
+    // Generate PDF
+    try {
+        const result = await generatePDF({
+            html: html,
+            data: { 
+                users: users,
+                date: new Date().toLocaleDateString()
+            },
+            path: './user-report.pdf',
+            type: 'pdf',
+            pdfOptions: options
+        });
+
+        console.log('PDF generated successfully:', result.filename);
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+    }
+}
+
+createPDF();
+```
+
+## TypeScript Usage
+
+```typescript
+import { generatePDF, PDFOptions } from 'pdf-node';
+import * as fs from 'fs';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+// For ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Define TypeScript interfaces
+interface User {
+    name: string;
+    age: number;
+    email: string;
+}
+
+interface TemplateData {
+    users: User[];
+    date: string;
+}
+
+async function generateUserReport() {
+    // Read HTML template
+    const html = fs.readFileSync(path.join(__dirname, 'template.html'), 'utf8');
+    
+    // Sample typed data
+    const users: User[] = [
+        { name: 'John Doe', age: 30, email: 'john@example.com' },
+        { name: 'Jane Smith', age: 25, email: 'jane@example.com' },
+    ];
+
+    // PDF options with TypeScript type
+    const options: PDFOptions = {
+        format: 'A4',
+        orientation: 'portrait',
+        border: '10mm',
+        header: {
+            height: '15mm',
+            contents: '<div style="text-align: center;">Confidential Report</div>'
+        },
+        footer: {
+            height: '15mm',
+            contents: {
+                default: '<div style="text-align: center; color: #666;">Page {{page}} of {{pages}}</div>'
+            }
+        }
+    };
+
+    // Generate PDF with buffer output
+    try {
+        const result = await generatePDF({
+            html: html,
+            data: { 
+                users: users,
+                date: new Date().toLocaleDateString()
+            },
+            type: 'pdf',
+            buffer: true, // Get PDF as buffer
+            pdfOptions: options
+        });
+
+        // Example: Save buffer to file
+        if ('buffer' in result) {
+            fs.writeFileSync('./user-report-buffer.pdf', result.buffer);
+            console.log('PDF generated from buffer');
+        }
+
+        // Or use the file path if not using buffer
+        if ('filename' in result) {
+            console.log('PDF generated at:', result.filename);
+        }
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+    }
+}
+
+generateUserReport();
+```
 
 - Step 2 - Create your HTML Template
 
