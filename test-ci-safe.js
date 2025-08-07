@@ -71,6 +71,23 @@ pdf.generatePDF({
 	}
 });
 
+// Test with missing path when buffer is not enabled
+pdf.generatePDF({
+	html: '<h1>Test</h1>',
+	data: {},
+	type: 'pdf'
+	// Missing both path and buffer: true
+}).catch(err => {
+	if (err.message && err.message.includes('Path is required')) {
+		console.log(
+			'✓ generatePDF correctly validates missing path when buffer is not enabled'
+		);
+	} else {
+		console.error('✗ generatePDF path validation failed:', err);
+		process.exit(1);
+	}
+});
+
 // Skip actual PDF generation in CI environments to avoid system dependency issues
 if (process.env.CI || process.env.GITHUB_ACTIONS) {
 	console.log('✓ CI environment detected - skipping PDF generation test');
