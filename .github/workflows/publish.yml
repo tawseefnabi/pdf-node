@@ -43,6 +43,10 @@ on:
         required: false
         default: false
         type: boolean
+      otp:
+        description: 'One-Time Password for npm 2FA (if required)'
+        required: false
+        type: string
 
 jobs:
   # Run CI checks first
@@ -201,8 +205,12 @@ jobs:
           # Verify authentication
           npm whoami
           
-          # Publish with explicit registry and access
-          npm publish --registry https://registry.npmjs.org/ --access public
+          # Publish with explicit registry and access (with optional OTP)
+          if [ -n "${{ github.event.inputs.otp }}" ]; then
+            npm publish --registry https://registry.npmjs.org/ --access public --otp="${{ github.event.inputs.otp }}"
+          else
+            npm publish --registry https://registry.npmjs.org/ --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_OPTIONS: --openssl-legacy-provider
@@ -282,7 +290,12 @@ jobs:
           npm whoami
           
           echo "Deploying existing version ${{ env.DEPLOY_VERSION }} to npm..."
-          npm publish --registry https://registry.npmjs.org/ --access public
+          # Publish with optional OTP support
+          if [ -n "${{ github.event.inputs.otp }}" ]; then
+            npm publish --registry https://registry.npmjs.org/ --access public --otp="${{ github.event.inputs.otp }}"
+          else
+            npm publish --registry https://registry.npmjs.org/ --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_OPTIONS: --openssl-legacy-provider
@@ -397,8 +410,12 @@ jobs:
           # Verify authentication
           npm whoami
           
-          # Publish with explicit registry and access
-          npm publish --registry https://registry.npmjs.org/ --access public
+          # Publish with explicit registry and access (with optional OTP)
+          if [ -n "${{ github.event.inputs.otp }}" ]; then
+            npm publish --registry https://registry.npmjs.org/ --access public --otp="${{ github.event.inputs.otp }}"
+          else
+            npm publish --registry https://registry.npmjs.org/ --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_OPTIONS: --openssl-legacy-provider
