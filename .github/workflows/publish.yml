@@ -69,10 +69,33 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+      
+      # Install system dependencies for html-pdf
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-3-dev \
+            libnotify-dev \
+            libgconf-2-4 \
+            libnss3-dev \
+            libxss1 \
+            libasound2-dev \
+            libxtst6 \
+            xauth \
+            xvfb \
+            libgbm-dev
+      
       - run: npm ci
-      - run: npm run lint
-      - run: npm run prettier-check
-      - run: npm run test-ci
+      
+      # Run checks with OpenSSL legacy provider
+      - name: Run quality checks
+        run: |
+          npm run lint
+          npm run prettier-check
+          xvfb-run -a npm run test-ci
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
 
   # Publish only after CI passes
   publish:
@@ -105,6 +128,22 @@ jobs:
           node-version: 20.x
           registry-url: 'https://registry.npmjs.org/'
       
+      # Install system dependencies for html-pdf
+      - name: Install system dependencies for html-pdf
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-3-dev \
+            libnotify-dev \
+            libgconf-2-4 \
+            libnss3-dev \
+            libxss1 \
+            libasound2-dev \
+            libxtst6 \
+            xauth \
+            xvfb \
+            libgbm-dev
+      
       - run: npm ci
       
       - name: Configure Git
@@ -139,6 +178,8 @@ jobs:
               echo "Automatic version bump: patch (default)"
             fi
           fi
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
       
       - name: Bump version and create tag
         run: |
@@ -152,6 +193,8 @@ jobs:
           git tag "v$NEW_VERSION"
           git push origin main
           git push origin "v$NEW_VERSION"
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
       
       - name: Create GitHub Release
         uses: actions/create-release@v1
@@ -171,9 +214,19 @@ jobs:
           prerelease: false
       
       - name: Publish to npm
-        run: npm publish
+        run: |
+          # Configure npm with authentication token
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
+          
+          # Verify authentication
+          npm whoami
+          
+          # Publish with explicit registry and access
+          npm publish --registry https://registry.npmjs.org/ --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_OPTIONS: --openssl-legacy-provider
 
   # Deploy existing version from main branch
   deploy-existing:
@@ -194,6 +247,22 @@ jobs:
         with:
           node-version: 20.x
           registry-url: 'https://registry.npmjs.org/'
+      
+      # Install system dependencies for html-pdf
+      - name: Install system dependencies for html-pdf
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-3-dev \
+            libnotify-dev \
+            libgconf-2-4 \
+            libnss3-dev \
+            libxss1 \
+            libasound2-dev \
+            libxtst6 \
+            xauth \
+            xvfb \
+            libgbm-dev
       
       - name: Validate and checkout existing version
         run: |
@@ -218,6 +287,8 @@ jobs:
           git checkout "v$VERSION"
           echo "Successfully checked out version v$VERSION"
           echo "DEPLOY_VERSION=$VERSION" >> $GITHUB_ENV
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
       
       - run: npm ci
       
@@ -230,13 +301,23 @@ jobs:
           else
             echo "Version verification passed: $PACKAGE_VERSION"
           fi
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
       
       - name: Deploy existing version to npm
         run: |
+          # Configure npm with authentication token
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
+          
+          # Verify authentication
+          npm whoami
+          
           echo "Deploying existing version ${{ env.DEPLOY_VERSION }} to npm..."
-          npm publish
+          npm publish --registry https://registry.npmjs.org/ --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_OPTIONS: --openssl-legacy-provider
       
       - name: Deployment summary
         run: |
@@ -265,6 +346,22 @@ jobs:
           node-version: 20.x
           registry-url: 'https://registry.npmjs.org/'
       
+      # Install system dependencies for html-pdf
+      - name: Install system dependencies for html-pdf
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-3-dev \
+            libnotify-dev \
+            libgconf-2-4 \
+            libnss3-dev \
+            libxss1 \
+            libasound2-dev \
+            libxtst6 \
+            xauth \
+            xvfb \
+            libgbm-dev
+      
       - run: npm ci
       
       - name: Configure Git
@@ -299,6 +396,8 @@ jobs:
               echo "Automatic version bump: patch (default)"
             fi
           fi
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
       
       - name: Bump version and create tag
         run: |
@@ -312,6 +411,8 @@ jobs:
           git tag "v$NEW_VERSION"
           git push origin main
           git push origin "v$NEW_VERSION"
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
       
       - name: Create GitHub Release
         uses: actions/create-release@v1
@@ -331,6 +432,16 @@ jobs:
           prerelease: false
       
       - name: Publish to npm
-        run: npm publish
+        run: |
+          # Configure npm with authentication token
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
+          
+          # Verify authentication
+          npm whoami
+          
+          # Publish with explicit registry and access
+          npm publish --registry https://registry.npmjs.org/ --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_OPTIONS: --openssl-legacy-provider
