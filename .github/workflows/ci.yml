@@ -1,4 +1,4 @@
-name: CI
+name: PDF Node Quality Checks
 
 on:
   push:
@@ -7,17 +7,7 @@ on:
     branches: [ "**" ]
 
 jobs:
-  prevent-direct-main-push:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Fail on direct push to main
-        run: |
-          echo "Direct pushes to main are not allowed. Please use a pull request."
-          exit 1
-
-  lint-and-prettier:
-    if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+  checks:
     runs-on: ubuntu-latest
     strategy:
       matrix:

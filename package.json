@@ -1,6 +1,6 @@
 {
 	"name": "pdf-node",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "A JavaScript PDF generation library for NodeJs",
 	"main": "index.js",
 	"scripts": {
@@ -9,7 +9,8 @@
 		"format": "prettier --write \"./**/*.{js,json}\"",
 		"lint": "eslint .",
 		"prettier-check": "prettier --check \"./**/*.{js,json}\"",
-		"test-ci": "node test.js"
+		"test-ci": "node test.js",
+		"prepare": "husky"
 	},
 	"keywords": [
 		"pdf",
@@ -58,9 +59,12 @@
 		"html-pdf": "^3.0.1"
 	},
 	"devDependencies": {
+		"@changesets/cli": "^2.29.5",
 		"@eslint/js": "^9.32.0",
+		"changesets": "^1.0.2",
 		"eslint": "^9.32.0",
 		"globals": "^16.3.0",
+		"husky": "^9.1.7",
 		"prettier": "^2.3.2"
 	}
 }
