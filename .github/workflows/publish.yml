@@ -1,6 +1,9 @@
 name: Publish to npm
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     types:
       - closed
@@ -12,11 +15,50 @@ on:
       - completed
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      action_type:
+        description: 'Action to perform'
+        required: true
+        default: 'new_version'
+        type: choice
+        options:
+          - new_version
+          - deploy_existing
+      version_type:
+        description: 'Version bump type (for new versions)'
+        required: false
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      existing_version:
+        description: 'Existing version to deploy (e.g., 1.0.4, v1.0.4)'
+        required: false
+        type: string
+      skip_ci:
+        description: 'Skip CI checks (use with caution)'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   # Run CI checks first
   ci-check:
-    if: github.event.pull_request.merged == true
+    if: |
+      (
+        github.event_name == 'push' &&
+        github.ref == 'refs/heads/main'
+      ) || (
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.merged == true
+      ) || (
+        github.event_name == 'workflow_dispatch' &&
+        github.event.inputs.action_type == 'new_version' &&
+        github.event.inputs.skip_ci != 'true'
+      )
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -37,11 +79,18 @@ jobs:
     needs: ci-check
     if: |
       (
+        github.event_name == 'push' &&
+        github.ref == 'refs/heads/main'
+      ) || (
         github.event_name == 'pull_request' &&
         github.event.pull_request.merged == true
       ) || (
         github.event_name == 'workflow_run' &&
         github.event.workflow_run.conclusion == 'success'
+      ) || (
+        github.event_name == 'workflow_dispatch' &&
+        github.event.inputs.action_type == 'new_version' &&
+        github.event.inputs.skip_ci != 'true'
       )
     runs-on: ubuntu-latest
     steps:
@@ -66,19 +115,189 @@ jobs:
       - name: Determine version bump type
         id: version-type
         run: |
-          # Check commit messages for conventional commit patterns
-          COMMITS=$(git log --pretty=format:"%s" $(git describe --tags --abbrev=0)..HEAD 2>/dev/null || git log --pretty=format:"%s")
-          
-          if echo "$COMMITS" | grep -qE "^(feat|feature)\b|BREAKING CHANGE"; then
-            if echo "$COMMITS" | grep -q "BREAKING CHANGE"; then
-              echo "bump=major" >> $GITHUB_OUTPUT
-            else
-              echo "bump=minor" >> $GITHUB_OUTPUT
-            fi
-          elif echo "$COMMITS" | grep -qE "^(fix|patch|perf|refactor|style|test|docs|chore)\b"; then
-            echo "bump=patch" >> $GITHUB_OUTPUT
+          # Check if manual workflow dispatch with version type specified
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version_type }}" ]; then
+            echo "bump=${{ github.event.inputs.version_type }}" >> $GITHUB_OUTPUT
+            echo "Manual version bump: ${{ github.event.inputs.version_type }}"
           else
-            echo "bump=patch" >> $GITHUB_OUTPUT
+            # Check commit messages for conventional commit patterns
+            COMMITS=$(git log --pretty=format:"%s" $(git describe --tags --abbrev=0)..HEAD 2>/dev/null || git log --pretty=format:"%s")
+            
+            if echo "$COMMITS" | grep -qE "^(feat|feature)\b|BREAKING CHANGE"; then
+              if echo "$COMMITS" | grep -q "BREAKING CHANGE"; then
+                echo "bump=major" >> $GITHUB_OUTPUT
+                echo "Automatic version bump: major (BREAKING CHANGE detected)"
+              else
+                echo "bump=minor" >> $GITHUB_OUTPUT
+                echo "Automatic version bump: minor (feat detected)"
+              fi
+            elif echo "$COMMITS" | grep -qE "^(fix|patch|perf|refactor|style|test|docs|chore)\b"; then
+              echo "bump=patch" >> $GITHUB_OUTPUT
+              echo "Automatic version bump: patch (fix/chore detected)"
+            else
+              echo "bump=patch" >> $GITHUB_OUTPUT
+              echo "Automatic version bump: patch (default)"
+            fi
+          fi
+      
+      - name: Bump version and create tag
+        run: |
+          npm version ${{ steps.version-type.outputs.bump }} --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          
+          # Commit the version bump
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to v$NEW_VERSION"
+          git tag "v$NEW_VERSION"
+          git push origin main
+          git push origin "v$NEW_VERSION"
+      
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.NEW_VERSION }}
+          release_name: Release v${{ env.NEW_VERSION }}
+          body: |
+            ## Changes in v${{ env.NEW_VERSION }}
+            
+            This release was automatically generated from the latest changes merged to main.
+            
+            ### Commit History
+            $(git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 HEAD~1)..HEAD 2>/dev/null || echo "- Initial release")
+          draft: false
+          prerelease: false
+      
+      - name: Publish to npm
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  # Deploy existing version from main branch
+  deploy-existing:
+    if: |
+      (
+        github.event_name == 'workflow_dispatch' &&
+        github.event.inputs.action_type == 'deploy_existing'
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          registry-url: 'https://registry.npmjs.org/'
+      
+      - name: Validate and checkout existing version
+        run: |
+          # Clean version input (remove 'v' prefix if present)
+          VERSION="${{ github.event.inputs.existing_version }}"
+          VERSION=${VERSION#v}
+          
+          if [ -z "$VERSION" ]; then
+            echo "Error: No version specified"
+            exit 1
+          fi
+          
+          # Check if tag exists
+          if ! git tag -l | grep -q "^v$VERSION$"; then
+            echo "Error: Version tag v$VERSION does not exist"
+            echo "Available tags:"
+            git tag -l | sort -V
+            exit 1
+          fi
+          
+          # Checkout the specific version
+          git checkout "v$VERSION"
+          echo "Successfully checked out version v$VERSION"
+          echo "DEPLOY_VERSION=$VERSION" >> $GITHUB_ENV
+      
+      - run: npm ci
+      
+      - name: Verify package.json version matches
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if [ "$PACKAGE_VERSION" != "${{ env.DEPLOY_VERSION }}" ]; then
+            echo "Warning: package.json version ($PACKAGE_VERSION) doesn't match tag version (${{ env.DEPLOY_VERSION }})"
+            echo "This might indicate an issue with the version tag"
+          else
+            echo "Version verification passed: $PACKAGE_VERSION"
+          fi
+      
+      - name: Deploy existing version to npm
+        run: |
+          echo "Deploying existing version ${{ env.DEPLOY_VERSION }} to npm..."
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      
+      - name: Deployment summary
+        run: |
+          echo "✅ Successfully deployed existing version ${{ env.DEPLOY_VERSION }} to npm"
+          echo "📦 Package: pdf-node@${{ env.DEPLOY_VERSION }}"
+          echo "🏷️ Git tag: v${{ env.DEPLOY_VERSION }}"
+
+  # Manual publish without CI (use with caution)
+  publish-manual:
+    if: |
+      (
+        github.event_name == 'workflow_dispatch' &&
+        github.event.inputs.action_type == 'new_version' &&
+        github.event.inputs.skip_ci == 'true'
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          registry-url: 'https://registry.npmjs.org/'
+      
+      - run: npm ci
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      
+      - name: Determine version bump type
+        id: version-type
+        run: |
+          # Check if manual workflow dispatch with version type specified
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version_type }}" ]; then
+            echo "bump=${{ github.event.inputs.version_type }}" >> $GITHUB_OUTPUT
+            echo "Manual version bump: ${{ github.event.inputs.version_type }}"
+          else
+            # Check commit messages for conventional commit patterns
+            COMMITS=$(git log --pretty=format:"%s" $(git describe --tags --abbrev=0)..HEAD 2>/dev/null || git log --pretty=format:"%s")
+            
+            if echo "$COMMITS" | grep -qE "^(feat|feature)\b|BREAKING CHANGE"; then
+              if echo "$COMMITS" | grep -q "BREAKING CHANGE"; then
+                echo "bump=major" >> $GITHUB_OUTPUT
+                echo "Automatic version bump: major (BREAKING CHANGE detected)"
+              else
+                echo "bump=minor" >> $GITHUB_OUTPUT
+                echo "Automatic version bump: minor (feat detected)"
+              fi
+            elif echo "$COMMITS" | grep -qE "^(fix|patch|perf|refactor|style|test|docs|chore)\b"; then
+              echo "bump=patch" >> $GITHUB_OUTPUT
+              echo "Automatic version bump: patch (fix/chore detected)"
+            else
+              echo "bump=patch" >> $GITHUB_OUTPUT
+              echo "Automatic version bump: patch (default)"
+            fi
           fi
       
       - name: Bump version and create tag
