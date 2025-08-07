@@ -6,7 +6,10 @@
 	"scripts": {
 		"start": "node index.js",
 		"test": "node test.js",
-		"format": "prettier --write \"./**/*.{js,json}\""
+		"format": "prettier --write \"./**/*.{js,json}\"",
+		"lint": "eslint .",
+		"prettier-check": "prettier --check \"./**/*.{js,json}\"",
+		"test-ci": "node test.js"
 	},
 	"keywords": [
 		"pdf",
@@ -55,6 +58,9 @@
 		"html-pdf": "^3.0.1"
 	},
 	"devDependencies": {
+		"@eslint/js": "^9.32.0",
+		"eslint": "^9.32.0",
+		"globals": "^16.3.0",
 		"prettier": "^2.3.2"
 	}
 }

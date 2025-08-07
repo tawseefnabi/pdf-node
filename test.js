@@ -65,4 +65,4 @@ let doc = {
 	path: './output.pdf'
 };
 
-pdf(doc, options);
+pdf.generatePDF(doc, options);
