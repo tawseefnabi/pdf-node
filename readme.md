@@ -1,6 +1,9 @@
 # pdf-node
   A JavaScript PDF generation library for NodeJs
 
+[![CI](https://github.com/tawseefnabi/pdf-node/actions/workflows/ci.yml/badge.svg)](https://github.com/tawseefnabi/pdf-node/actions/workflows/ci.yml)
+[![npm version](https://badge.fury.io/js/pdf-node.svg)](https://badge.fury.io/js/pdf-node)
+
 <br>
 
 [![📟](https://raw.githubusercontent.com/ahmadawais/stuff/master/images/git/install.png)](./../../)
