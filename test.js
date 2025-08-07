@@ -15,6 +15,9 @@ let htm_template = `<!DOCTYPE html>
       <br />
       {{/each}}
     </ul>
+    ${pdf.addNewPage()}
+    <h2>Second Page Content</h2>
+    <p>This content should appear on a new page.</p>
   </body>
 </html>`;
 
@@ -62,4 +65,4 @@ let doc = {
 	path: './output.pdf'
 };
 
-pdf(doc, options);
+pdf.generatePDF(doc, options);

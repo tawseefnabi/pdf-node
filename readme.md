@@ -125,6 +125,21 @@ npm install  pdf-node --save
     });
   ```
 
+## Manual Page Breaks
+
+You can manually insert a page break in your PDF using the `addNewPage` function:
+
+```javascript
+const pdf = require('pdf-node');
+let html = `
+  <div>Page 1 content</div>
+  ${pdf.addNewPage()}
+  <div>Page 2 content</div>
+`;
+```
+
+This will force the content after `addNewPage()` to start on a new PDF page, similar to a page break in Google Docs or Microsoft Word.
+
 ## Reference
 
 Please refer to the following if you want to use conditions in your HTML template:

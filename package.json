@@ -1,12 +1,15 @@
 {
 	"name": "pdf-node",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"description": "A JavaScript PDF generation library for NodeJs",
 	"main": "index.js",
 	"scripts": {
 		"start": "node index.js",
 		"test": "node test.js",
-		"format": "prettier --write \"./**/*.{js,json}\""
+		"format": "prettier --write \"./**/*.{js,json}\"",
+		"lint": "eslint .",
+		"prettier-check": "prettier --check \"./**/*.{js,json}\"",
+		"test-ci": "node test.js"
 	},
 	"keywords": [
 		"pdf",
@@ -49,16 +52,15 @@
 	"homepage": "https://github.com/tawseefnabi/pdf-node#readme",
 	"author": "tawseef <tawseefnabi9@gmail.com> (https://twitter.com/NabiTowseef)",
 	"license": "MIT",
-	"publishConfig": {
-		"@tawseef:registry": "https://npm.pkg.github.com/",
-		"access": "public"
-	},
 	"dependencies": {
 		"cli-error-handler": "^1.0.3",
 		"handlebars": "^4.7.7",
 		"html-pdf": "^3.0.1"
 	},
 	"devDependencies": {
+		"@eslint/js": "^9.32.0",
+		"eslint": "^9.32.0",
+		"globals": "^16.3.0",
 		"prettier": "^2.3.2"
 	}
 }
