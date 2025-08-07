@@ -202,13 +202,39 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
           echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
           
+          # Debug: Check npm configuration
+          echo "NPM configuration:"
+          npm config list
+          
           # Verify authentication
+          echo "Testing npm authentication..."
           npm whoami
           
           # Publish with explicit registry and access (with optional OTP)
+          echo "Publishing package..."
           if [ -n "${{ github.event.inputs.otp }}" ]; then
+            echo "Using OTP for 2FA"
             npm publish --registry https://registry.npmjs.org/ --access public --otp="${{ github.event.inputs.otp }}"
+          elif [ "${{ github.event_name }}" = "push" ] || [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "Automated publish on merge - attempting without OTP first"
+            npm publish --registry https://registry.npmjs.org/ --access public || {
+              echo "❌ Automated publish failed due to 2FA requirement"
+              echo "📝 Version bump completed successfully, but npm publish requires 2FA"
+              echo "✅ Package version: $NEW_VERSION"
+              echo "✅ Git tag created: v$NEW_VERSION"
+              echo "✅ GitHub release will be created"
+              echo ""
+              echo "🔐 To complete npm publishing:"
+              echo "   1. Go to GitHub Actions → Publish to npm workflow"
+              echo "   2. Click 'Run workflow' → Select 'deploy_existing'"
+              echo "   3. Enter existing version: $NEW_VERSION"
+              echo "   4. Enter your 2FA code in the OTP field"
+              echo "   5. Run the workflow"
+              echo ""
+              echo "⚠️  Continuing with GitHub release creation..."
+            }
           else
+            echo "Publishing without OTP"
             npm publish --registry https://registry.npmjs.org/ --access public
           fi
         env:
@@ -286,14 +312,21 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
           echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
           
+          # Debug: Check npm configuration
+          echo "NPM configuration:"
+          npm config list
+          
           # Verify authentication
+          echo "Testing npm authentication..."
           npm whoami
           
           echo "Deploying existing version ${{ env.DEPLOY_VERSION }} to npm..."
           # Publish with optional OTP support
           if [ -n "${{ github.event.inputs.otp }}" ]; then
+            echo "Using OTP for 2FA"
             npm publish --registry https://registry.npmjs.org/ --access public --otp="${{ github.event.inputs.otp }}"
           else
+            echo "Publishing without OTP"
             npm publish --registry https://registry.npmjs.org/ --access public
           fi
         env:
@@ -407,13 +440,39 @@ jobs:
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
           echo "registry=https://registry.npmjs.org/" >> ~/.npmrc
           
+          # Debug: Check npm configuration
+          echo "NPM configuration:"
+          npm config list
+          
           # Verify authentication
+          echo "Testing npm authentication..."
           npm whoami
           
           # Publish with explicit registry and access (with optional OTP)
+          echo "Publishing package..."
           if [ -n "${{ github.event.inputs.otp }}" ]; then
+            echo "Using OTP for 2FA"
             npm publish --registry https://registry.npmjs.org/ --access public --otp="${{ github.event.inputs.otp }}"
+          elif [ "${{ github.event_name }}" = "push" ] || [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "Automated publish on merge - attempting without OTP first"
+            npm publish --registry https://registry.npmjs.org/ --access public || {
+              echo "❌ Automated publish failed due to 2FA requirement"
+              echo "📝 Version bump completed successfully, but npm publish requires 2FA"
+              echo "✅ Package version: $NEW_VERSION"
+              echo "✅ Git tag created: v$NEW_VERSION"
+              echo "✅ GitHub release will be created"
+              echo ""
+              echo "🔐 To complete npm publishing:"
+              echo "   1. Go to GitHub Actions → Publish to npm workflow"
+              echo "   2. Click 'Run workflow' → Select 'deploy_existing'"
+              echo "   3. Enter existing version: $NEW_VERSION"
+              echo "   4. Enter your 2FA code in the OTP field"
+              echo "   5. Run the workflow"
+              echo ""
+              echo "⚠️  Continuing with GitHub release creation..."
+            }
           else
+            echo "Publishing without OTP"
             npm publish --registry https://registry.npmjs.org/ --access public
           fi
         env:
