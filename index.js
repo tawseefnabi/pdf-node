@@ -4,6 +4,12 @@ const pdf = require('html-pdf');
 const Handlebars = require('handlebars');
 const handleError = require('cli-error-handler');
 
+function addNewPage() {
+    return '<div style="page-break-after: always;"></div>';
+}
+
+module.exports.addNewPage = addNewPage;
+
 module.exports = (doc, options) => {
 	return new Promise((resolve, reject) => {
 		if (!doc || !doc.html || !doc.data) {
