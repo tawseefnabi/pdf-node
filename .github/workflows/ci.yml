@@ -18,20 +18,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install system dependencies
+      - name: Install minimal dependencies for html-pdf
         run: |
-          set -e
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends \
-            libgtk-3-dev \
-            libnotify-dev \
-            libxss1 \
-            libasound2-dev \
-            libxtst6 \
-            xauth \
-            xvfb \
-            libgbm-dev
-          # Skip libnss3-dev if it causes issues - it may not be essential for html-pdf
+          sudo apt-get install -y xvfb
+          # Install only essential packages to avoid dependency conflicts
       - run: npm ci
       - run: npm run lint
       - run: npm run prettier-check

@@ -9,7 +9,7 @@
 		"format": "prettier --write \"./**/*.{js,json}\"",
 		"lint": "eslint .",
 		"prettier-check": "prettier --check \"./**/*.{js,json}\"",
-		"test-ci": "node test.js",
+		"test-ci": "node test-ci-safe.js",
 		"prepare": "husky"
 	},
 	"keywords": [
