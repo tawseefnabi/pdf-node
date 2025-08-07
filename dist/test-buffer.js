@@ -1,7 +1,7 @@
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import {fileURLToPath} from 'url';
+import {dirname, join} from 'path';
 import * as fs from 'fs';
-import { generatePDF, addNewPage } from './index.js';
+import {generatePDF, addNewPage} from './index.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 // Test HTML template
@@ -68,89 +68,86 @@ const htmlTemplate = `<!DOCTYPE html>
 </html>`;
 // Test data
 const data = {
-    title: 'TypeScript PDF Generation Test',
-    user: {
-        name: 'TypeScript Developer',
-        email: 'typescript@example.com',
-        role: 'Senior Developer'
-    },
-    timestamp: new Date().toLocaleString()
+	title: 'TypeScript PDF Generation Test',
+	user: {
+		name: 'TypeScript Developer',
+		email: 'typescript@example.com',
+		role: 'Senior Developer'
+	},
+	timestamp: new Date().toLocaleString()
 };
 // Test buffer output
 async function testBufferOutput() {
-    console.log('Testing buffer output...');
-    try {
-        const result = (await generatePDF({
-            html: htmlTemplate,
-            data,
-            buffer: true,
-            type: 'pdf',
-            pdfOptions: {
-                format: 'A4',
-                border: {
-                    top: '10mm',
-                    right: '10mm',
-                    bottom: '10mm',
-                    left: '10mm'
-                }
-            }
-        }));
-        console.log('Buffer test successful!');
-        console.log(`Buffer size: ${result.size} bytes`);
-        // Optionally save the buffer to a file for verification
-        const outputPath = join(__dirname, '..', 'test-output-buffer.pdf');
-        fs.writeFileSync(outputPath, result.buffer);
-        console.log(`PDF saved to: ${outputPath}`);
-        return result;
-    }
-    catch (error) {
-        console.error('Error in buffer test:', error);
-        throw error;
-    }
+	console.log('Testing buffer output...');
+	try {
+		const result = await generatePDF({
+			html: htmlTemplate,
+			data,
+			buffer: true,
+			type: 'pdf',
+			pdfOptions: {
+				format: 'A4',
+				border: {
+					top: '10mm',
+					right: '10mm',
+					bottom: '10mm',
+					left: '10mm'
+				}
+			}
+		});
+		console.log('Buffer test successful!');
+		console.log(`Buffer size: ${result.size} bytes`);
+		// Optionally save the buffer to a file for verification
+		const outputPath = join(__dirname, '..', 'test-output-buffer.pdf');
+		fs.writeFileSync(outputPath, result.buffer);
+		console.log(`PDF saved to: ${outputPath}`);
+		return result;
+	} catch (error) {
+		console.error('Error in buffer test:', error);
+		throw error;
+	}
 }
 // Test file output
 async function testFileOutput() {
-    console.log('Testing file output...');
-    const outputPath = join(__dirname, '..', 'test-output-file.pdf');
-    try {
-        const result = (await generatePDF({
-            html: htmlTemplate,
-            data,
-            path: outputPath,
-            type: 'pdf',
-            pdfOptions: {
-                format: 'A4',
-                border: {
-                    top: '10mm',
-                    right: '10mm',
-                    bottom: '10mm',
-                    left: '10mm'
-                }
-            }
-        }));
-        console.log('File test successful!');
-        console.log(`PDF saved to: ${result.filename}`);
-        return result;
-    }
-    catch (error) {
-        console.error('Error in file test:', error);
-        throw error;
-    }
+	console.log('Testing file output...');
+	const outputPath = join(__dirname, '..', 'test-output-file.pdf');
+	try {
+		const result = await generatePDF({
+			html: htmlTemplate,
+			data,
+			path: outputPath,
+			type: 'pdf',
+			pdfOptions: {
+				format: 'A4',
+				border: {
+					top: '10mm',
+					right: '10mm',
+					bottom: '10mm',
+					left: '10mm'
+				}
+			}
+		});
+		console.log('File test successful!');
+		console.log(`PDF saved to: ${result.filename}`);
+		return result;
+	} catch (error) {
+		console.error('Error in file test:', error);
+		throw error;
+	}
 }
 // Run tests
 async function runTests() {
-    try {
-        console.log('Starting TypeScript PDF generation tests...');
-        // Test buffer output
-        await testBufferOutput();
-        // Test file output
-        await testFileOutput();
-        console.log('All tests completed successfully!');
-    }
-    catch (error) {
-        console.error('Tests failed:', error);
-        process.exit(1);
-    }
+	try {
+		console.log('Starting TypeScript PDF generation tests...');
+		// Test buffer output
+		await testBufferOutput();
+		// Test file output
+		await testFileOutput();
+		console.log('All tests completed successfully!');
+	} catch (error) {
+		console.error('Tests failed:', error);
+		process.exit(1);
+	}
 }
 // Run the tests
 runTests();
