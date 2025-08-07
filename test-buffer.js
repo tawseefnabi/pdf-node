@@ -71,79 +71,84 @@ const fileDoc = {
 
 // Test data
 let userData = {
-    title: 'PDF Buffer Support Demo',
-    user: {
-        name: 'John Developer',
-        email: 'john@example.com',
-        role: 'Full Stack Developer'
-    }
+	title: 'PDF Buffer Support Demo',
+	user: {
+		name: 'John Developer',
+		email: 'john@example.com',
+		role: 'Full Stack Developer'
+	}
 };
 
 // Test 1: Generate PDF as buffer
 console.log('\n=== Test 1: Buffer Output ===');
 let bufferDoc = {
-    html: htm_template,
-    data: userData,
-    type: 'pdf',
-    buffer: true  // Enable buffer output
+	html: htm_template,
+	data: userData,
+	type: 'pdf',
+	buffer: true // Enable buffer output
 };
 
 pdf.generatePDF(bufferDoc)
-    .then(result => {
-        console.log('✅ Buffer generation successful!');
-        console.log('📊 Buffer size:', result.size, 'bytes');
-        console.log('📄 Content type:', result.type);
-        console.log('🔍 Buffer type:', typeof result.buffer);
-        console.log('✨ Buffer is instance of Buffer:', Buffer.isBuffer(result.buffer));
-        
-        // Demonstrate saving buffer to file (optional)
-        const fs = require('fs');
-        fs.writeFileSync('./buffer-output.pdf', result.buffer);
-        console.log('💾 Buffer saved to buffer-output.pdf for verification');
-        
-        // Test 2: Generate PDF as file (existing functionality)
-        console.log('\n=== Test 2: File Output (Existing Feature) ===');
-        let fileDoc = {
-            html: htm_template,
-            data: userData,
-            type: 'pdf',
-            path: './file-output.pdf'
-        };
-        
-        return pdf.generatePDF(fileDoc);
-    })
-    .then(result => {
-        console.log('✅ File generation successful!');
-        console.log('📁 File path:', result.filename);
-        
-        // Test 3: Error handling - missing path when buffer is false
-        console.log('\n=== Test 3: Error Handling ===');
-        let invalidDoc = {
-            html: htm_template,
-            data: userData,
-            type: 'pdf'
-            // Missing both path and buffer: true
-        };
-        
-        return pdf.generatePDF(invalidDoc);
-    })
-    .catch(err => {
-        console.log('✅ Error handling works correctly:', err.message);
-        
-        console.log('\n🎉 All tests completed successfully!');
-        console.log('\n📚 Usage Summary:');
-        console.log('   • For APIs/web services: Set buffer: true');
-        console.log('   • For file output: Set path: "./filename.pdf"');
-        console.log('   • Buffer output returns: { buffer, size, type }');
-        console.log('   • File output returns: { filename }');
-        
-        // Clean up test files
-        const fs = require('fs');
-        try {
-            if (fs.existsSync('./buffer-output.pdf')) fs.unlinkSync('./buffer-output.pdf');
-            if (fs.existsSync('./file-output.pdf')) fs.unlinkSync('./file-output.pdf');
-            console.log('🧹 Test files cleaned up');
-        } catch (cleanupErr) {
-            console.log('⚠️  Cleanup note:', cleanupErr.message);
-        }
-    });
+	.then(result => {
+		console.log('✅ Buffer generation successful!');
+		console.log('📊 Buffer size:', result.size, 'bytes');
+		console.log('📄 Content type:', result.type);
+		console.log('🔍 Buffer type:', typeof result.buffer);
+		console.log(
+			'✨ Buffer is instance of Buffer:',
+			Buffer.isBuffer(result.buffer)
+		);
+
+		// Demonstrate saving buffer to file (optional)
+		const fs = require('fs');
+		fs.writeFileSync('./buffer-output.pdf', result.buffer);
+		console.log('💾 Buffer saved to buffer-output.pdf for verification');
+
+		// Test 2: Generate PDF as file (existing functionality)
+		console.log('\n=== Test 2: File Output (Existing Feature) ===');
+		let fileDoc = {
+			html: htm_template,
+			data: userData,
+			type: 'pdf',
+			path: './file-output.pdf'
+		};
+
+		return pdf.generatePDF(fileDoc);
+	})
+	.then(result => {
+		console.log('✅ File generation successful!');
+		console.log('📁 File path:', result.filename);
+
+		// Test 3: Error handling - missing path when buffer is false
+		console.log('\n=== Test 3: Error Handling ===');
+		let invalidDoc = {
+			html: htm_template,
+			data: userData,
+			type: 'pdf'
+			// Missing both path and buffer: true
+		};
+
+		return pdf.generatePDF(invalidDoc);
+	})
+	.catch(err => {
+		console.log('✅ Error handling works correctly:', err.message);
+
+		console.log('\n🎉 All tests completed successfully!');
+		console.log('\n📚 Usage Summary:');
+		console.log('   • For APIs/web services: Set buffer: true');
+		console.log('   • For file output: Set path: "./filename.pdf"');
+		console.log('   • Buffer output returns: { buffer, size, type }');
+		console.log('   • File output returns: { filename }');
+
+		// Clean up test files
+		const fs = require('fs');
+		try {
+			if (fs.existsSync('./buffer-output.pdf'))
+				fs.unlinkSync('./buffer-output.pdf');
+			if (fs.existsSync('./file-output.pdf'))
+				fs.unlinkSync('./file-output.pdf');
+			console.log('🧹 Test files cleaned up');
+		} catch (cleanupErr) {
+			console.log('⚠️  Cleanup note:', cleanupErr.message);
+		}
+	});

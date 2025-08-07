@@ -79,7 +79,9 @@ pdf.generatePDF({
 	// Missing both path and buffer: true
 }).catch(err => {
 	if (err.message && err.message.includes('Path is required')) {
-		console.log('✓ generatePDF correctly validates missing path when buffer is not enabled');
+		console.log(
+			'✓ generatePDF correctly validates missing path when buffer is not enabled'
+		);
 	} else {
 		console.error('✗ generatePDF path validation failed:', err);
 		process.exit(1);
