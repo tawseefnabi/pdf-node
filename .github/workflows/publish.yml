@@ -13,15 +13,72 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
       - name: Use Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
           registry-url: 'https://registry.npmjs.org/'
+      
       - run: npm ci
-      - name: Version packages with changesets
-        run: npx changeset version
-      - name: Publish packages with changesets
-        run: npx changeset publish
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      
+      - name: Determine version bump type
+        id: version-type
+        run: |
+          # Check commit messages for conventional commit patterns
+          COMMITS=$(git log --pretty=format:"%s" $(git describe --tags --abbrev=0)..HEAD 2>/dev/null || git log --pretty=format:"%s")
+          
+          if echo "$COMMITS" | grep -qE "^(feat|feature)\b|BREAKING CHANGE"; then
+            if echo "$COMMITS" | grep -q "BREAKING CHANGE"; then
+              echo "bump=major" >> $GITHUB_OUTPUT
+            else
+              echo "bump=minor" >> $GITHUB_OUTPUT
+            fi
+          elif echo "$COMMITS" | grep -qE "^(fix|patch|perf|refactor|style|test|docs|chore)\b"; then
+            echo "bump=patch" >> $GITHUB_OUTPUT
+          else
+            echo "bump=patch" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Bump version and create tag
+        run: |
+          npm version ${{ steps.version-type.outputs.bump }} --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          
+          # Commit the version bump
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to v$NEW_VERSION"
+          git tag "v$NEW_VERSION"
+          git push origin main
+          git push origin "v$NEW_VERSION"
+      
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.NEW_VERSION }}
+          release_name: Release v${{ env.NEW_VERSION }}
+          body: |
+            ## Changes in v${{ env.NEW_VERSION }}
+            
+            This release was automatically generated from the latest changes merged to main.
+            
+            ### Commit History
+            $(git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 HEAD~1)..HEAD 2>/dev/null || echo "- Initial release")
+          draft: false
+          prerelease: false
+      
+      - name: Publish to npm
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
