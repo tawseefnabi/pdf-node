@@ -74,17 +74,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            libgtk-3-dev \
-            libnotify-dev \
-            libnss3-dev \
-            libxss1 \
-            libasound2-dev \
-            libxtst6 \
-            xauth \
-            xvfb \
-            libgbm-dev
-      
+          sudo apt-get install -y libgtk-3-dev libnotify-dev libnss3-dev libxss1 libasound2-dev libxtst6 xauth xvfb libgbm-dev
       - run: npm ci
       
       # Run checks with OpenSSL legacy provider
