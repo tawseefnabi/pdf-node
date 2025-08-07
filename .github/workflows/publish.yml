@@ -83,7 +83,7 @@ jobs:
         run: |
           npm run lint
           npm run prettier-check
-          xvfb-run -a npm run test-ci
+          npm run test-ci
         env:
           NODE_OPTIONS: --openssl-legacy-provider
 
@@ -118,21 +118,10 @@ jobs:
           node-version: 20.x
           registry-url: 'https://registry.npmjs.org/'
       
-      # Install system dependencies for html-pdf
-      - name: Install system dependencies for html-pdf
+      # Skip system dependencies - using CI-safe testing approach
+      - name: Setup CI environment
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libgtk-3-dev \
-            libnotify-dev \
-
-
-            libxss1 \
-            libasound2-dev \
-            libxtst6 \
-            xauth \
-            xvfb \
-            libgbm-dev
+          echo "Using CI-safe testing approach - no system dependencies needed"
       
       - run: npm ci
       
@@ -238,21 +227,10 @@ jobs:
           node-version: 20.x
           registry-url: 'https://registry.npmjs.org/'
       
-      # Install system dependencies for html-pdf
-      - name: Install system dependencies for html-pdf
+      # Skip system dependencies - using CI-safe testing approach
+      - name: Setup CI environment
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libgtk-3-dev \
-            libnotify-dev \
-
-
-            libxss1 \
-            libasound2-dev \
-            libxtst6 \
-            xauth \
-            xvfb \
-            libgbm-dev
+          echo "Using CI-safe testing approach - no system dependencies needed"
       
       - name: Validate and checkout existing version
         run: |
@@ -336,21 +314,10 @@ jobs:
           node-version: 20.x
           registry-url: 'https://registry.npmjs.org/'
       
-      # Install system dependencies for html-pdf
-      - name: Install system dependencies for html-pdf
+      # Skip system dependencies - using CI-safe testing approach
+      - name: Setup CI environment
         run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libgtk-3-dev \
-            libnotify-dev \
-
-
-            libxss1 \
-            libasound2-dev \
-            libxtst6 \
-            xauth \
-            xvfb \
-            libgbm-dev
+          echo "Using CI-safe testing approach - no system dependencies needed"
       
       - run: npm ci
       

@@ -18,11 +18,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install minimal dependencies for html-pdf
+      - name: Setup CI environment
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y xvfb
-          # Install only essential packages to avoid dependency conflicts
+          echo "Using CI-safe testing approach - no system dependencies needed"
       - run: npm ci
       - run: npm run lint
       - run: npm run prettier-check
