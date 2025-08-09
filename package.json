@@ -1,6 +1,6 @@
 {
 	"name": "pdf-node",
-	"version": "1.4.2",
+	"version": "1.5.0",
 	"description": "A modern, feature-rich PDF generation library for Node.js with TypeScript support. Convert HTML to PDF with Handlebars templates, buffers, and streams.",
 	"type": "module",
 	"main": "dist/index.js",
