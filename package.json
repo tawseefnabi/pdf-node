@@ -17,7 +17,7 @@
 		"format": "prettier --write \"./**/*.{js,json,ts}\"",
 		"lint": "eslint . --ext .ts",
 		"prettier-check": "prettier --check \"./**/*.{js,json,ts}\"",
-		"test-ci": "npm run build && node dist/test-ci-safe.js",
+		"test-ci": "npm run build && node dist/src/test-ci-safe.js",
 		"prepare": "husky",
 		"postversion": "git push && git push --tags"
 	},
