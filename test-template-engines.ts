@@ -1,6 +1,6 @@
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
-import {generatePDF, clearTemplateCache} from './dist/index.js';
+import {generatePDF, clearTemplateCache} from './src/index.js';
 import fs from 'fs/promises';
 import path from 'path';
 
