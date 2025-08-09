@@ -13,7 +13,7 @@
 		"start": "node dist/index.js",
 		"build": "tsc",
 		"build:watch": "tsc --watch",
-		"test": "npm run build && node dist/test-buffer.js",
+		"test": "npm run build && node dist/src/test-buffer.js",
 		"format": "prettier --write \"**/*.{js,json,ts}\" --ignore-path .prettierignore",
 		"lint": "eslint . --ext .ts",
 		"prettier-check": "prettier --check \"**/*.{js,json,ts}\" --ignore-path .prettierignore",
