@@ -166,8 +166,9 @@ async function compileTemplate(
 		case 'ejs': {
 			try {
 				const ejs = await import('ejs');
-				const templateFn = ejs.compile(template, { async: true });
-				compiled = async (data: Record<string, any>) => await templateFn(data);
+				const templateFn = ejs.compile(template, {async: true});
+				compiled = async (data: Record<string, any>) =>
+					await templateFn(data);
 			} catch (error) {
 				throw new Error(`Failed to compile EJS template: ${error}`);
 			}
