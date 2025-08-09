@@ -1,0 +1,13 @@
+# Ignore build and generated files
+dist/
+types/
+
+# Ignore test output files
+test-output-*
+
+# Ignore node modules
+node_modules/
+
+# Ignore IDE specific files
+.vscode/
+.idea/

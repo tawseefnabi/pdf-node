@@ -14,9 +14,9 @@
 		"build": "tsc",
 		"build:watch": "tsc --watch",
 		"test": "npm run build && node dist/test-buffer.js",
-		"format": "prettier --write \"./**/*.{js,json,ts}\"",
+		"format": "prettier --write \"**/*.{js,json,ts}\" --ignore-path .prettierignore",
 		"lint": "eslint . --ext .ts",
-		"prettier-check": "prettier --check \"./**/*.{js,json,ts}\"",
+		"prettier-check": "prettier --check \"**/*.{js,json,ts}\" --ignore-path .prettierignore",
 		"test-ci": "npm run build && node dist/src/test-ci-safe.js",
 		"prepare": "husky",
 		"postversion": "git push && git push --tags"
