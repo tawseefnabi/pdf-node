@@ -1,11 +1,9 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+set -e
 
-# Run Prettier check
-npm run prettier-check
+# Run lint-staged to check staged files
+npx lint-staged
 
-# Run ESLint
-npm run lint
-
-# Run tests
+# Build and run tests
+npm run build
 npm test

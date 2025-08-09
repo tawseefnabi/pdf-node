@@ -1,8 +1,8 @@
 {
-	"type": "module",
 	"name": "pdf-node",
 	"version": "1.4.2",
 	"description": "A modern, feature-rich PDF generation library for Node.js with TypeScript support. Convert HTML to PDF with Handlebars templates, buffers, and streams.",
+	"type": "module",
 	"main": "dist/index.js",
 	"types": "types/index.d.ts",
 	"files": [
@@ -15,9 +15,9 @@
 		"build:watch": "tsc --watch",
 		"test": "npm run build && node dist/test-buffer.js",
 		"format": "prettier --write \"./**/*.{js,json,ts}\"",
-		"lint": "eslint --config .eslintrc.mjs src/ types/ --ext .ts",
+		"lint": "eslint . --ext .ts",
 		"prettier-check": "prettier --check \"./**/*.{js,json,ts}\"",
-		"test-ci": "npm run build && node dist/test-ci-safe.js",
+		"test-ci": "npm run build && node dist/src/test-ci-safe.js",
 		"prepare": "husky",
 		"postversion": "git push && git push --tags"
 	},
@@ -106,24 +106,40 @@
 	"license": "MIT",
 	"dependencies": {
 		"cli-error-handler": "^1.0.3",
+		"ejs": "^3.1.10",
 		"handlebars": "^4.7.7",
 		"html-pdf": "^3.0.1"
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.29.5",
 		"@eslint/js": "^9.32.0",
+		"@types/ejs": "^3.1.4",
 		"@types/handlebars": "^4.0.40",
 		"@types/html-pdf": "^3.0.3",
 		"@types/node": "^24.2.0",
 		"@typescript-eslint/eslint-plugin": "^8.39.0",
 		"@typescript-eslint/parser": "^8.39.0",
 		"changesets": "^1.0.2",
-		"eslint": "^9.32.0",
+		"eslint": "^9.33.0",
+		"eslint-config-prettier": "^10.1.8",
 		"eslint-import-resolver-typescript": "^4.4.4",
 		"globals": "^16.3.0",
 		"husky": "^9.1.7",
+		"lint-staged": "^15.2.2",
 		"prettier": "^2.3.2",
+		"ts-node": "^10.9.2",
 		"typescript": "^5.9.2",
 		"typescript-eslint": "^8.39.0"
+	},
+	"lint-staged": {
+		"**/*.ts": [
+			"eslint --fix --no-ignore"
+		],
+		"**/*.js": [
+			"eslint --fix --no-ignore"
+		],
+		"**/*.{json,md,mdx,yml,yaml}": [
+			"prettier --write"
+		]
 	}
 }
