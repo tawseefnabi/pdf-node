@@ -1,0 +1,5 @@
+# Ignore auto-generated files
+/types/**
+/dist/**
+/node_modules/**
+*.d.ts
